@@ -19,15 +19,16 @@ function initTable() {
     $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
         id VARCHAR(50) PRIMARY KEY,
         branch VARCHAR(20),
-        items JSON,
         total DECIMAL(10,2),
         status VARCHAR(20) DEFAULT 'pending',
         timestamp VARCHAR(30),
-        customer_name VARCHAR(100),
-        table_number VARCHAR(20),
-        notes TEXT,
+        raw_order JSON,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )");
+    // Add raw_order column if upgrading from old schema
+    try {
+        $pdo->exec("ALTER TABLE orders ADD COLUMN raw_order JSON");
+    } catch (Exception $e) { /* column already exists */ }
 }
 
 header('Content-Type: application/json');

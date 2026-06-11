@@ -103,7 +103,7 @@ function OrderCard({ order, onStatusChange }) {
 
       {/* Items */}
       <div className="px-4 py-2 space-y-1.5 border-b border-gray-100">
-        {order.items.map((item, i) => (
+        {(order.items || []).map((item, i) => (
           <div key={i} className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <span className="text-sm font-semibold text-gray-800">
@@ -133,7 +133,7 @@ function OrderCard({ order, onStatusChange }) {
               )}
             </div>
             <span className="text-sm font-bold text-gray-700 flex-shrink-0">
-              {(item.size.price * item.qty).toFixed(0)} QAR
+              {((item.size?.price ?? 0) * (item.qty ?? 1)).toFixed(0)} QAR
             </span>
           </div>
         ))}
@@ -143,8 +143,8 @@ function OrderCard({ order, onStatusChange }) {
       <div className="px-4 py-2.5 space-y-1.5 border-b border-gray-100">
         <div className="flex items-center gap-2 text-sm">
           <Phone className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-          <span className="font-semibold text-gray-700">{order.contact.name}</span>
-          <span className="text-gray-500">{order.contact.phone}</span>
+          <span className="font-semibold text-gray-700">{order.contact?.name}</span>
+          <span className="text-gray-500">{order.contact?.phone}</span>
         </div>
         {order.mode === 'delivery' && order.gpsCoords && (
           <div className="flex items-start gap-2 text-xs text-blue-600">

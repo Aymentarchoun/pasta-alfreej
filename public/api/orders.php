@@ -9,7 +9,7 @@ if ($method === 'GET') {
     $branch = $_GET['branch'] ?? null;
     $date   = $_GET['date']   ?? null;
 
-    $sql = 'SELECT * FROM orders WHERE 1=1';
+    $sql = 'SELECT raw_order, status, created_at FROM orders WHERE 1=1';
     $params = [];
 
     if ($branch) {
@@ -26,12 +26,15 @@ if ($method === 'GET') {
     $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($rows as &$row) {
-        $row['items'] = json_decode($row['items'], true);
-        $row['total'] = (float)$row['total'];
+    $orders = [];
+    foreach ($rows as $row) {
+        $order = json_decode($row['raw_order'], true) ?? [];
+        // Always use DB status (may have been updated via PATCH)
+        $order['status'] = $row['status'];
+        $orders[] = $order;
     }
 
-    echo json_encode($rows);
+    echo json_encode($orders);
 
 } elseif ($method === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -41,20 +44,17 @@ if ($method === 'GET') {
         exit;
     }
 
-    $stmt = $pdo->prepare('INSERT INTO orders (id, branch, items, total, status, timestamp, customer_name, table_number, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    $stmt = $pdo->prepare('INSERT INTO orders (id, branch, total, status, timestamp, raw_order)
+        VALUES (?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE status=VALUES(status)');
 
     $stmt->execute([
         $data['id'],
-        $data['branch']        ?? null,
-        json_encode($data['items'] ?? []),
-        $data['total']         ?? 0,
-        $data['status']        ?? 'pending',
-        $data['timestamp']     ?? date('c'),
-        $data['customerName']  ?? null,
-        $data['tableNumber']   ?? null,
-        $data['notes']         ?? null,
+        $data['branch']    ?? null,
+        $data['total']     ?? 0,
+        $data['status']    ?? 'pending',
+        $data['timestamp'] ?? date('c'),
+        json_encode($data),
     ]);
 
     echo json_encode(['success' => true]);
