@@ -50,6 +50,7 @@ function fmtTime(iso) {
 
 // ── Order Card ─────────────────────────────────────────────────────────────────
 function OrderCard({ order, onStatusChange }) {
+  if (!order?.id) return null;
   const branch = BRANCH_CONFIG[order.branch] || BRANCH_CONFIG.sheraton;
   const sc     = STATUS_CONFIG[order.status] || STATUS_CONFIG.new;
   const isNew  = order.status === 'new';

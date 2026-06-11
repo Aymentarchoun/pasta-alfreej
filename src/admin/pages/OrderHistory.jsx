@@ -27,6 +27,7 @@ const BRANCH_COLOR = { sheraton: 'text-[#d4832a]', maamoura: 'text-blue-600' };
 
 function HistoryCard({ order }) {
   const [expanded, setExpanded] = useState(false);
+  if (!order?.id || !order?.items) return null;
   const bc = BRANCH_COLOR[order.branch] || 'text-gray-700';
 
   return (

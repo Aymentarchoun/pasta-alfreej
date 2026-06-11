@@ -220,13 +220,12 @@ export default function CustomizationModal({ item: initialItem, onClose }) {
       {/* Panel */}
       <div
         dir={isAr ? 'rtl' : 'ltr'}
-        className={`relative bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg
-                    max-h-[94vh] flex flex-col overflow-hidden animate-slide-up
+        className={`relative bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md
+                    max-h-[88vh] flex flex-col overflow-hidden animate-slide-up
                     transition-opacity duration-200 ${transition ? 'opacity-0' : 'opacity-100'}`}
       >
-        {/* ── Hero image — portrait 3:4 ────────────────────────────────────── */}
-        <div className="relative w-full flex-shrink-0 bg-gray-100 overflow-hidden"
-             style={{ aspectRatio: '3 / 4', maxHeight: '62vh' }}>
+        {/* ── Hero image — fixed compact banner ────────────────────────────── */}
+        <div className="relative w-full flex-shrink-0 bg-gray-100 overflow-hidden h-36 sm:h-48">
           {!imgLoaded && (
             <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
           )}
@@ -275,17 +274,17 @@ export default function CustomizationModal({ item: initialItem, onClose }) {
           </button>
 
           {/* Title overlay at bottom of image */}
-          <div className={`absolute bottom-0 inset-x-0 px-4 pb-3 pt-6
+          <div className={`absolute bottom-0 inset-x-0 px-4 pb-2.5 pt-5
             bg-gradient-to-t from-black/60 to-transparent ${isAr ? 'text-right' : ''}`}>
-            <h2 className="font-display font-bold text-white text-lg leading-tight drop-shadow">{name}</h2>
+            <h2 className="font-display font-bold text-white text-base leading-tight drop-shadow">{name}</h2>
           </div>
         </div>
 
         {/* Scrollable content */}
-        <div className={`flex-1 overflow-y-auto px-5 py-4 ${isAr ? 'text-right' : ''}`}>
+        <div className={`flex-1 overflow-y-auto px-5 py-3.5 ${isAr ? 'text-right' : ''}`}>
 
           {/* Description */}
-          <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
+          <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
 
           {/* Offer savings banner */}
           {isOffer && item.originalPrice && (

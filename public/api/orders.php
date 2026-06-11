@@ -9,7 +9,7 @@ if ($method === 'GET') {
     $branch = $_GET['branch'] ?? null;
     $date   = $_GET['date']   ?? null;
 
-    $sql = 'SELECT raw_order, status, created_at FROM orders WHERE 1=1';
+    $sql = 'SELECT raw_order, status, created_at FROM orders WHERE raw_order IS NOT NULL';
     $params = [];
 
     if ($branch) {
@@ -28,7 +28,8 @@ if ($method === 'GET') {
 
     $orders = [];
     foreach ($rows as $row) {
-        $order = json_decode($row['raw_order'], true) ?? [];
+        $order = json_decode($row['raw_order'], true);
+        if (!$order || !isset($order['id'])) continue;
         // Always use DB status (may have been updated via PATCH)
         $order['status'] = $row['status'];
         $orders[] = $order;
