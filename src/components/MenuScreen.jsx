@@ -190,25 +190,17 @@ export default function MenuScreen() {
           className="flex-1 min-w-0 overflow-y-auto"
           style={{ overscrollBehavior: 'contain' }}
         >
-          {/* Sticky category header — sticks to top of THIS scroll panel */}
-          <div className={`px-3 sm:px-5 pt-4 pb-3 border-b border-gray-100 bg-white
-            sticky top-0 z-20 ${isAr ? 'text-right' : ''}`}>
-            <h2 className="font-bold text-charcoal text-base sm:text-xl leading-tight">
-              {catLabel(activeCat)}
-            </h2>
-            <p className="text-gray-400 text-xs mt-0.5">
-              {filtered.length} {isAr ? 'أصناف' : 'items'}
-            </p>
-          </div>
-
           {/* Item grid */}
-          <div className="grid grid-cols-2 gap-px bg-gray-100">
+          <div className="grid grid-cols-2 gap-px bg-gray-100 pt-px">
             {filtered.map(item => (
               <div key={item.id} className="bg-white p-2 sm:p-3">
                 <MenuCard item={item} onSelect={setSelectedItem} lang={lang} />
               </div>
             ))}
           </div>
+
+          {/* Blank space below the last section */}
+          <div className="h-28" aria-hidden="true" />
 
           {/* Skyline footer — full-bleed across the whole screen width */}
           <footer
