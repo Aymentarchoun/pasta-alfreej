@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Trigger Hostinger Git deploy
+      - name: Push built files to hostinger-deploy branch
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.HOSTINGER_DEPLOY_HOOK }}"
+          cd dist
+          git init
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          git add .
+          git commit -m "Deploy built files"
+          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Aymentarchoun/pasta-alfreej.git" HEAD:hostinger-deploy
