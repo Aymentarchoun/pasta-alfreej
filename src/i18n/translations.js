@@ -27,7 +27,7 @@ export const translations = {
     },
     categories: {
       offers:     'Offers',
-      signatures: 'Alfreej Signatures',
+      signatures: 'Hot Deals',
       pasta:      'Pasta',
       pizza:      'Pizza',
       risotto:    'Risotto & Lasagna',
@@ -111,7 +111,7 @@ export const translations = {
     },
     categories: {
       offers:     'العروض',
-      signatures: 'أطباقنا المميزة',
+      signatures: 'عروض ساخنة',
       pasta:      'باستا',
       pizza:      'بيتزا',
       risotto:    'ريزوتو ولازانيا',

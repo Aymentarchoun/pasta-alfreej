@@ -76,8 +76,7 @@ const IMG = {
 };
 
 export const categories = [
-  { id: 'offers',     emoji: '🔥' },
-  { id: 'signatures', emoji: '⭐' },
+  { id: 'signatures', emoji: '🔥' },
   { id: 'pasta',      emoji: '🍝' },
   { id: 'pizza',      emoji: '🍕' },
   { id: 'risotto',    emoji: '🫕' },
@@ -166,10 +165,10 @@ export const composeSauces = [
 // ─── Menu Items ───────────────────────────────────────────────────────────────
 export const menuItems = [
 
-  // ── OFFERS ─────────────────────────────────────────────────────────────────
+  // ── HOT DEALS (offer deals — shown first inside the Hot Deals section) ──────
   {
     id: 'pasta-deal',
-    category: 'offers',
+    category: 'signatures',
     nameEn: 'Pasta Deal',
     nameAr: 'عرض الباستا',
     descriptionEn: 'Pasta Arrabbiata + Salad + Fries + Soft Drink',
@@ -186,7 +185,7 @@ export const menuItems = [
   },
   {
     id: 'pizza-deal',
-    category: 'offers',
+    category: 'signatures',
     nameEn: 'Pizza Deal',
     nameAr: 'عرض البيتزا',
     descriptionEn: 'Pizza Margherita + Salad + Fries + Soft Drink',
@@ -1115,10 +1114,10 @@ export const menuItems = [
   {
     id: 'compose-meal',
     category: 'compose',
-    nameEn: 'Build Your Pasta',
-    nameAr: 'إصنع الباستا على ذوقك',
-    descriptionEn: 'Pick your shape → choose your sauce → add your extras. Made fresh.',
-    descriptionAr: 'اختر الشكل ← اختر الصوص ← أضف إضافاتك. يُحضّر طازجاً.',
+    nameEn: 'Compose Your Pasta',
+    nameAr: 'اصنع الباستا على ذوقك',
+    descriptionEn: 'Pick your shape → choose your sauce → add your extras. Starts at 32 QAR.',
+    descriptionAr: 'اختر الشكل ← اختر الصوص ← أضف إضافاتك. يبدأ من 32 ريال.',
     image: IMG.compose,
     // Sizes = pasta shapes — all at base price 32 QAR, each with a photo
     sizes: [
@@ -1138,6 +1137,21 @@ export const menuItems = [
     ],
     addons: composeAddons,
     related: ['pasta-arrabiata', 'cesar-salad', 'french-fries'],
+    badge: 'Custom',
+    hasMealUpsell: true,
+    isNew: false, isSpicy: false, isVeg: false,
+  },
+  {
+    id: 'compose-pizza',
+    category: 'compose',
+    nameEn: 'Compose Your Pizza',
+    nameAr: 'اصنع البيتزا على ذوقك',
+    descriptionEn: 'Wood-fired base → add your favourite toppings & sauces. Starts at 26 QAR.',
+    descriptionAr: 'عجينة بالحطب ← أضف الإضافات والصوصات المفضلة لديك. يبدأ من 26 ريال.',
+    image: IMG.margherita,
+    sizes: [{ id: 'reg', labelEn: 'Regular', labelAr: 'عادي', price: 26 }],
+    addons: pizzaAddons,
+    related: ['pizza-margherita', 'cesar-salad', 'french-fries'],
     badge: 'Custom',
     hasMealUpsell: true,
     isNew: false, isSpicy: false, isVeg: false,

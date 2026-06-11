@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Flame, Leaf, Sparkles, Tag, Clock } from 'lucide-react';
+import { Plus, Flame, Leaf, Sparkles } from 'lucide-react';
 import { categories as BASE_CATS, menuItems as BASE_ITEMS } from '../data/menuData';
 import { getLiveMenu } from '../admin/adminStore';
 import { useLang } from '../contexts/LangContext';
@@ -42,45 +42,6 @@ function SidebarItem({ cat, active, onClick, label, items }) {
       >
         {label}
       </span>
-    </button>
-  );
-}
-
-// ─── Offer Card ────────────────────────────────────────────────────────────────
-function OfferCard({ item, onSelect, lang }) {
-  const isAr = lang === 'ar';
-  const name   = isAr ? item.nameAr        : item.nameEn;
-  const desc   = isAr ? item.descriptionAr : item.descriptionEn;
-  const saving = isAr ? item.savingAr      : item.savingEn;
-  const price  = item.sizes[0].price;
-
-  return (
-    <button
-      onClick={() => onSelect(item)}
-      className="relative flex-shrink-0 w-56 sm:w-64 bg-white rounded-2xl overflow-hidden
-                 shadow-md border border-gray-100 active:scale-[0.97] transition-transform text-left"
-    >
-      <div className="relative h-28 sm:h-32 bg-gray-50">
-        <img src={item.image} alt={name} className="w-full h-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <span className="absolute top-2 left-2 flex items-center gap-1 bg-red-500 text-white
-                         text-[9px] font-bold px-2 py-0.5 rounded-full">
-          <Tag className="w-2.5 h-2.5" />
-          {isAr ? 'عرض خاص' : 'OFFER'}
-        </span>
-        <span className="absolute top-2 right-2 bg-yellow-400 text-charcoal
-                         text-[9px] font-bold px-2 py-0.5 rounded-full">
-          {saving}
-        </span>
-      </div>
-      <div className="px-3 py-2.5">
-        <p className="font-bold text-charcoal text-sm leading-tight">{name}</p>
-        <p className="text-gray-400 text-xs mt-0.5 line-clamp-1">{desc}</p>
-        <div className={`flex items-center gap-2 mt-1.5 ${isAr ? 'flex-row-reverse' : ''}`}>
-          <span className="text-gray-300 text-xs line-through">{item.originalPrice} QAR</span>
-          <span className="text-brand-600 font-bold text-sm">{price} QAR</span>
-        </div>
-      </div>
     </button>
   );
 }
@@ -147,8 +108,13 @@ function MenuCard({ item, onSelect, lang }) {
         </h3>
         <div className={`flex items-center justify-between mt-auto pt-1.5 w-full
           ${isAr ? 'flex-row-reverse' : ''}`}>
-          <span className="font-bold text-charcoal text-xs sm:text-sm">
-            {price} <span className="text-gray-400 font-normal text-[10px]">QAR</span>
+          <span className={`flex items-baseline gap-1 ${isAr ? 'flex-row-reverse' : ''}`}>
+            {item.originalPrice && (
+              <span className="text-gray-300 text-[10px] line-through">{item.originalPrice}</span>
+            )}
+            <span className="font-bold text-charcoal text-xs sm:text-sm">
+              {price} <span className="text-gray-400 font-normal text-[10px]">QAR</span>
+            </span>
           </span>
           <div className="w-6 h-6 sm:w-7 sm:h-7 bg-brand-500 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
             <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" strokeWidth={3} />
@@ -189,39 +155,11 @@ export default function MenuScreen() {
   const menuItems  = liveItems;
   const categories = liveCats;
 
-  const nonOfferCats = categories.filter(c => c.id !== 'offers');
-  const offerItems   = menuItems.filter(i => i.category === 'offers');
-  // Compose section also shows the current offers at the top
-  // Compose order: 1) Build Your Pasta, 2) Pasta Deal, 3) Pizza Deal
-  const filtered = activeCat === 'compose'
-    ? [...menuItems.filter(i => i.category === 'compose'), ...offerItems]
-    : menuItems.filter(i => i.category === activeCat);
-  const catLabel     = (id) => tr.categories[id] || id;
+  const filtered = menuItems.filter(i => i.category === activeCat);
+  const catLabel = (id) => tr.categories[id] || id;
 
   return (
-    <div className="bg-white" style={{ height: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column' }}>
-
-      {/* ── Offers strip — fixed height, does not scroll ─────────────────── */}
-      <div className="flex-shrink-0 bg-gray-50 border-b border-gray-200 py-3 sm:py-4">
-        <div className={`flex items-center gap-2 px-3 sm:px-4 mb-2.5 ${isAr ? 'flex-row-reverse' : ''}`}>
-          <span className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            <Tag className="w-3 h-3" />
-            {isAr ? 'العروض' : 'OFFERS'}
-          </span>
-          <span className="flex items-center gap-1 text-gray-400 text-xs">
-            <Clock className="w-3 h-3" />
-            {isAr ? 'لفترة محدودة' : 'Limited time'}
-          </span>
-        </div>
-        <div
-          className={`flex gap-3 px-3 sm:px-4 overflow-x-auto pb-1 ${isAr ? 'flex-row-reverse' : ''}`}
-          style={{ scrollbarWidth: 'none' }}
-        >
-          {offerItems.map(item => (
-            <OfferCard key={item.id} item={item} onSelect={setSelectedItem} lang={lang} />
-          ))}
-        </div>
-      </div>
+    <div className="bg-white" style={{ height: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
 
       {/* ── Dual-scroll body — sidebar and content scroll independently ──── */}
       <div
@@ -234,7 +172,7 @@ export default function MenuScreen() {
           style={{ overscrollBehavior: 'contain' }}
         >
           <div className="py-2 px-1 space-y-0.5">
-            {nonOfferCats.map(cat => (
+            {categories.map(cat => (
               <SidebarItem
                 key={cat.id}
                 cat={cat}
@@ -272,8 +210,10 @@ export default function MenuScreen() {
             ))}
           </div>
 
-          {/* Skyline footer inside the scroll panel */}
-          <footer className="w-full bg-white pt-6">
+          {/* Skyline footer — full-bleed across the whole screen width */}
+          <footer
+            className={`bg-white pt-6 w-screen ${isAr ? '-mr-20 sm:-mr-28' : '-ml-20 sm:-ml-28'}`}
+          >
             <div className="px-4 pb-5 text-center space-y-1">
               <p className="text-brand-600 font-bold text-sm leading-snug" dir="rtl">
                 أحسن باستا في قطر و البتزا الإيطالية الأصيلة في مكان واحد
