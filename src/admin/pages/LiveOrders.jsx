@@ -205,47 +205,37 @@ export default function LiveOrders({ session }) {
   const [filter,     setFilter]     = useState('active'); // 'active' | 'all'
   const lastCountRef = useRef(0);
 
-  // Load orders from localStorage, filtered by branch if needed
-  const loadOrders = useCallback(() => {
-    let all = getOrders();
-    if (session.branch) {
-      all = all.filter(o => o.branch === session.branch);
+  const loadOrders = useCallback(async () => {
+    try {
+      const all = await getOrders({ branch: session.branch || undefined });
+      setOrders(all);
+      return all;
+    } catch (e) {
+      console.error('Failed to load orders', e);
+      return [];
     }
-    setOrders(all);
-    return all;
   }, [session.branch]);
 
   useEffect(() => {
-    const initial = loadOrders();
-    lastCountRef.current = initial.filter(o => o.status === 'new').length;
+    loadOrders().then(initial => {
+      lastCountRef.current = initial.filter(o => o.status === 'new').length;
+    });
 
-    // Listen for new orders from same tab (customer app fired CustomEvent)
-    function onNewOrder() {
-      const updated = loadOrders();
+    // Poll every 5 seconds for new orders
+    const interval = setInterval(async () => {
+      const updated = await loadOrders();
       const newCount = updated.filter(o => o.status === 'new').length;
       if (newCount > lastCountRef.current && soundOn) {
         playSound();
       }
       lastCountRef.current = newCount;
-    }
+    }, 5000);
 
-    // Listen for cross-tab storage changes
-    function onStorage(e) {
-      if (e.key === 'pa_orders') {
-        onNewOrder();
-      }
-    }
-
-    window.addEventListener('pa_new_order', onNewOrder);
-    window.addEventListener('storage', onStorage);
-    return () => {
-      window.removeEventListener('pa_new_order', onNewOrder);
-      window.removeEventListener('storage', onStorage);
-    };
+    return () => clearInterval(interval);
   }, [loadOrders, soundOn]);
 
-  function handleStatusChange(orderId, newStatus) {
-    updateOrderStatus(orderId, newStatus);
+  async function handleStatusChange(orderId, newStatus) {
+    await updateOrderStatus(orderId, newStatus);
     loadOrders();
   }
 

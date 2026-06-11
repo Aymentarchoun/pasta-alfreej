@@ -62,27 +62,36 @@ export function login(username, password) {
   return session;
 }
 
-// ── Orders ────────────────────────────────────────────────────────────────────
-export function getOrders() {
-  return JSON.parse(localStorage.getItem(KEYS.ORDERS) || '[]');
+// ── Orders — backed by MySQL via PHP API ─────────────────────────────────────
+const API = '/api/orders.php';
+
+export async function getOrders({ branch, date } = {}) {
+  const params = new URLSearchParams();
+  if (branch) params.set('branch', branch);
+  if (date)   params.set('date', date);
+  const url = params.toString() ? `${API}?${params}` : API;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch orders');
+  return res.json();
 }
 
-export function saveOrders(orders) {
-  localStorage.setItem(KEYS.ORDERS, JSON.stringify(orders));
-}
-
-export function addOrder(order) {
-  const orders = getOrders();
-  orders.unshift(order);
-  saveOrders(orders);
+export async function addOrder(order) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(order),
+  });
+  if (!res.ok) throw new Error('Failed to save order');
   window.dispatchEvent(new CustomEvent('pa_new_order', { detail: order }));
 }
 
-export function updateOrderStatus(orderId, status) {
-  const orders = getOrders();
-  const updated = orders.map(o => o.id === orderId ? { ...o, status } : o);
-  saveOrders(updated);
-  return updated;
+export async function updateOrderStatus(orderId, status) {
+  const res = await fetch(API, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: orderId, status }),
+  });
+  if (!res.ok) throw new Error('Failed to update order');
 }
 
 // ── Menu overrides ────────────────────────────────────────────────────────────

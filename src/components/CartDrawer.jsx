@@ -733,10 +733,9 @@ export default function CartDrawer() {
     }, 300);
   }
 
-  function handleDone(contactData) {
+  async function handleDone(contactData) {
     setContact(contactData);
 
-    // Persist order to localStorage so admin dashboard can receive it
     const order = {
       id:          'ORD-' + Date.now(),
       timestamp:   new Date().toISOString(),
@@ -761,7 +760,11 @@ export default function CartDrawer() {
       deliveryFee: mode === 'delivery' ? 10 : 0,
       total:       mode === 'delivery' ? subtotal + 10 : subtotal,
     };
-    addOrder(order);
+    try {
+      await addOrder(order);
+    } catch (e) {
+      console.error('Order save failed', e);
+    }
     cartDispatch({ type: 'CLEAR_CART' });
     setStep('done');
   }

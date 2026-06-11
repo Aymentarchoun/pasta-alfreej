@@ -121,15 +121,14 @@ export default function OrderHistory({ session }) {
 
   const isManager = !session.branch;
 
-  const load = useCallback(() => {
-    let all = getOrders();
-    if (session.branch) {
-      all = all.filter(o => o.branch === session.branch);
-    } else if (branchFilter !== 'all') {
-      all = all.filter(o => o.branch === branchFilter);
+  const load = useCallback(async () => {
+    try {
+      const branch = session.branch || (branchFilter !== 'all' ? branchFilter : undefined);
+      const all = await getOrders({ branch, date });
+      setOrders(all);
+    } catch (e) {
+      console.error('Failed to load order history', e);
     }
-    const dayOrders = all.filter(o => o.timestamp?.slice(0, 10) === date);
-    setOrders(dayOrders);
   }, [date, session.branch, branchFilter]);
 
   useEffect(() => { load(); }, [load]);
