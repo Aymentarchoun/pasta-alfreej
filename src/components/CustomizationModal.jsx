@@ -213,19 +213,20 @@ export default function CustomizationModal({ item: initialItem, onClose }) {
   const addonLabel = (a) => isAr ? a.labelAr : a.labelEn;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
+      {/* Panel — compact centered card */}
       <div
         dir={isAr ? 'rtl' : 'ltr'}
-        className={`relative bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md
+        className={`relative bg-white rounded-3xl shadow-2xl w-[86%] max-w-[19rem] sm:max-w-sm
                     max-h-[88vh] flex flex-col overflow-hidden animate-slide-up
                     transition-opacity duration-200 ${transition ? 'opacity-0' : 'opacity-100'}`}
       >
-        {/* ── Hero image — fixed compact banner ────────────────────────────── */}
-        <div className="relative w-full flex-shrink-0 bg-gray-100 overflow-hidden h-36 sm:h-48">
+        {/* ── Hero image — full portrait photo (card is sized to match) ───────── */}
+        <div className="relative w-full flex-shrink-0 bg-gray-100 overflow-hidden"
+             style={{ aspectRatio: '3 / 4' }}>
           {!imgLoaded && (
             <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
           )}
@@ -492,8 +493,12 @@ export default function CustomizationModal({ item: initialItem, onClose }) {
             />
           </div>
 
-          {/* ── Qty + Add button ──────────────────────────────────────────── */}
-          <div className={`mt-5 mb-2 flex items-center gap-3 ${isAr ? 'flex-row-reverse' : ''}`}>
+        </div>
+
+        {/* ── Sticky Qty + Add button — always visible until added ──────────── */}
+        {!added && (
+          <div className={`flex-shrink-0 px-5 py-3 border-t border-gray-100 bg-white
+                           flex items-center gap-3 ${isAr ? 'flex-row-reverse' : ''}`}>
             <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1">
               <button
                 onClick={() => setQty(q => Math.max(1, q - 1))}
@@ -512,19 +517,14 @@ export default function CustomizationModal({ item: initialItem, onClose }) {
 
             <button
               onClick={handleAdd}
-              disabled={added}
-              className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl py-3
                          font-bold text-sm text-white transition-all active:scale-95
-                         ${added ? 'bg-green-500' : 'bg-brand-500 hover:bg-brand-600'}`}
+                         bg-brand-500 hover:bg-brand-600"
             >
-              {added ? (
-                <><Check className="w-4 h-4" /> {tr.modal.added}</>
-              ) : (
-                `${tr.modal.addToOrder} · ${lineTotal.toFixed(2)} QAR`
-              )}
+              {`${tr.modal.addToOrder} · ${lineTotal.toFixed(2)} QAR`}
             </button>
           </div>
-        </div>
+        )}
 
         {/* ── Cross-sell + action bar — only after adding ──────────────────── */}
         {added && (
