@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-body;
+    overscroll-behavior: none;
+  }
+
+  /* Arabic typography */
+  :lang(ar) body,
+  [dir="rtl"] {
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', system-ui, sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
+}
+
+@layer utilities {
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .kiosk-touch-target {
+    min-height: 80px;
+  }
+
+  .img-cover {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .text-shadow {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.85);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(26,26,26,0.85);
+  }
+}
