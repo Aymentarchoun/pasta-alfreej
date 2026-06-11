@@ -3,9 +3,10 @@ import {
   Bell, BellOff, CheckCircle, Clock, ChefHat,
   Bike, UtensilsCrossed, ShoppingBag,
   Phone, MapPin, CreditCard, Banknote,
-  RefreshCw, Volume2, VolumeX,
+  RefreshCw, Volume2, VolumeX, Printer,
 } from 'lucide-react';
 import { getOrders, updateOrderStatus } from '../adminStore';
+import { printReceipt } from '../printReceipt';
 
 // ── Branch display config ──────────────────────────────────────────────────────
 const BRANCH_CONFIG = {
@@ -71,9 +72,20 @@ function OrderCard({ order, onStatusChange }) {
         >
           {branch.label}
         </span>
-        <div className="text-right">
-          <p className="text-xs text-gray-500 font-medium">{fmtTime(order.timestamp)}</p>
-          <p className="text-[11px] text-gray-400 font-mono">#{order.id.slice(-6)}</p>
+        <div className="flex items-center gap-2">
+          <div className="text-right">
+            <p className="text-xs text-gray-500 font-medium">{fmtTime(order.timestamp)}</p>
+            <p className="text-[11px] text-gray-400 font-mono">#{order.id.slice(-6)}</p>
+          </div>
+          <button
+            onClick={() => printReceipt(order)}
+            title="Print receipt (80mm)"
+            className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/70 hover:bg-white
+                       border border-gray-200 text-gray-600 hover:text-gray-900 transition-all
+                       active:scale-95 shadow-sm"
+          >
+            <Printer className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -147,13 +159,18 @@ function OrderCard({ order, onStatusChange }) {
           <span className="font-semibold text-gray-700">{order.contact?.name}</span>
           <span className="text-gray-500">{order.contact?.phone}</span>
         </div>
-        {order.mode === 'delivery' && order.gpsCoords && (
-          <div className="flex items-start gap-2 text-xs text-blue-600">
+        {order.mode === 'delivery' && order.gpsCoords && order.gpsCoords.lat != null && (
+          <a
+            href={`https://maps.google.com/?q=${order.gpsCoords.lat},${order.gpsCoords.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-start gap-2 text-xs text-blue-600 hover:underline"
+          >
             <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
             <span>
-              {order.gpsCoords.lat?.toFixed(5)}, {order.gpsCoords.lng?.toFixed(5)}
+              {Number(order.gpsCoords.lat).toFixed(5)}, {Number(order.gpsCoords.lng).toFixed(5)}
             </span>
-          </div>
+          </a>
         )}
         {order.mode === 'delivery' && order.manualAddr && (
           <div className="flex items-start gap-2 text-xs text-blue-600">

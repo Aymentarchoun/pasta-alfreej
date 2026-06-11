@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Calendar, TrendingUp, ShoppingBag, Banknote,
-  CreditCard, Bike, UtensilsCrossed, ChevronDown,
+  CreditCard, Bike, UtensilsCrossed, ChevronDown, Printer,
 } from 'lucide-react';
 import { getOrders } from '../adminStore';
+import { printReceipt } from '../printReceipt';
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -108,6 +109,15 @@ function HistoryCard({ order }) {
                 : <><CreditCard className="w-3.5 h-3.5 text-indigo-500" /> Card</>}
               {order.contact?.phone && <span className="ml-2">· {order.contact.phone}</span>}
             </div>
+
+            <button
+              onClick={() => printReceipt(order)}
+              className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
+                         border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700
+                         font-semibold text-sm transition-colors active:scale-[0.98]"
+            >
+              <Printer className="w-4 h-4" /> Print Receipt
+            </button>
           </div>
         </div>
       )}
