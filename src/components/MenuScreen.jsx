@@ -182,6 +182,8 @@ export default function MenuScreen() {
                 items={menuItems}
               />
             ))}
+            {/* Blank space below the category menu — breathing room */}
+            <div className="h-48" aria-hidden="true" />
           </div>
         </aside>
 
