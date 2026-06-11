@@ -199,8 +199,8 @@ export default function MenuScreen() {
             ))}
           </div>
 
-          {/* Blank space below the last section */}
-          <div className="h-28" aria-hidden="true" />
+          {/* Blank space below the last section — breathing room */}
+          <div className="h-48" aria-hidden="true" />
 
           {/* Skyline footer — full-bleed across the whole screen width */}
           <footer
